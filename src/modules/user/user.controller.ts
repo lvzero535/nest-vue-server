@@ -26,9 +26,9 @@ export class UserController {
   create(@Body() userDto: UserDto) {
     return this.userService.create(userDto);
   }
-  @Delete(':id')
-  delete(@Param('id') id: number) {
-    return this.userService.delete(id);
+  @Delete()
+  delete(@Body('ids') ids: number[]) {
+    return this.userService.delete(ids);
   }
   @Get(':id')
   findOne(@Param('id') id: string) {

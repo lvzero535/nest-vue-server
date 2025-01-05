@@ -7,6 +7,9 @@ import { DatabaseModule } from '@/shared/database/database.module';
 import { UserModule } from '@/modules/user/user.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from '@/common/interceptors/transform.interceptor';
+import { DeptModule } from '@/modules/dept/dept.module';
+import { MenuModule } from '@/modules/menu/menu.module';
+import { RoleModule } from '@/modules/role/role.module';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { TransformInterceptor } from '@/common/interceptors/transform.intercepto
     }),
     DatabaseModule,
     UserModule,
+    DeptModule,
+    MenuModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [

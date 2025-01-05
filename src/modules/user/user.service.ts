@@ -3,6 +3,10 @@ import { Like, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from './user.dto';
+import { BusinessException } from '@/common/exceptions/business.exception';
+import { ErrorCodeEnum } from '@/constants/error-code.constant';
+import { isEmpty } from 'lodash';
+import { RoleService } from '../role/role.service';
 
 @Injectable()
 export class UserService {
@@ -13,6 +17,7 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    private roleService: RoleService,
   ) {}
 
   async findAllUsers({
@@ -25,6 +30,7 @@ export class UserService {
       .where({
         username: Like(`%${search}%`),
       })
+      .leftJoinAndSelect('user.roles', 'role')
       .orderBy('user.createAt', 'DESC')
       .skip((page - 1) * pageSize)
       .take(pageSize);
@@ -35,20 +41,43 @@ export class UserService {
       total,
     };
   }
-  create(userDto: UserDto) {
-    return this.usersRepository.save(userDto);
+  async create(userDto: UserDto) {
+    const user = await this.usersRepository.findOneBy({
+      username: userDto.username,
+    });
+    if (user) {
+      throw new BusinessException(ErrorCodeEnum.DuplicateRecord);
+    }
+    const roles = isEmpty(userDto.roleIds)
+      ? []
+      : await this.roleService.findRoleByIds(userDto.roleIds);
+    return this.usersRepository.save({
+      ...userDto,
+      roles,
+    });
   }
-  delete(id: number) {
+  delete(id: number[]) {
     return this.usersRepository.delete(id);
   }
-  update(id: string, userDto: UserDto) {
+  async update(id: string, userDto: UserDto) {
+    const user = await this.findOne(id);
     // const user = this.findOne(id);
-    return this.usersRepository.update(id, {
-      // ...user,
+    const roles = isEmpty(userDto.roleIds)
+      ? []
+      : await this.roleService.findRoleByIds(userDto.roleIds);
+
+    user.roles = roles;
+    return this.usersRepository.save({
+      ...user,
       ...userDto,
     });
   }
   findOne(id: string) {
-    return this.usersRepository.findOneBy({ id });
+    return this.usersRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['roles'],
+    });
   }
 }
