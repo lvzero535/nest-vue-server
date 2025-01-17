@@ -1,4 +1,4 @@
-import { registerAs } from '@nestjs/config';
+import { ConfigType, registerAs } from '@nestjs/config';
 import { DataSourceOptions } from 'typeorm';
 import { env, envBoolean, envNumber } from '@/global/env';
 
@@ -20,3 +20,5 @@ export const dbRegToken = 'dbRegToken';
  *（具有如上所述的.env文件和已解析和合并的外部定义变量）
  */
 export const DatabaseConfig = registerAs(dbRegToken, getDataSourceOptions);
+
+export type IDatabaseConfig = ConfigType<typeof DatabaseConfig>;

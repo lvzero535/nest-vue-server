@@ -47,7 +47,7 @@ export class RoleService {
       name: roleDto.name,
     });
     if (role) {
-      throw new BusinessException(ErrorCodeEnum.DuplicateRecord);
+      throw new BusinessException(ErrorCodeEnum.DUPLICATE_RECORD);
     }
     const menus = isEmpty(roleDto.menuIds)
       ? []

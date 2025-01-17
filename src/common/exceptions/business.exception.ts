@@ -6,7 +6,7 @@ export class BusinessException extends HttpException {
     const [code, msg] = message.split(':');
     super(
       {
-        code,
+        code: +code,
         msg,
       },
       HttpStatus.OK,

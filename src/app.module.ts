@@ -5,11 +5,13 @@ import { ConfigModule } from '@nestjs/config';
 import config from '@/config';
 import { DatabaseModule } from '@/shared/database/database.module';
 import { UserModule } from '@/modules/user/user.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from '@/common/interceptors/transform.interceptor';
 import { DeptModule } from '@/modules/dept/dept.module';
 import { MenuModule } from '@/modules/menu/menu.module';
 import { RoleModule } from '@/modules/role/role.module';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
 
 @Module({
   imports: [
@@ -35,6 +37,7 @@ import { RoleModule } from '@/modules/role/role.module';
     DeptModule,
     MenuModule,
     RoleModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
@@ -43,6 +46,11 @@ import { RoleModule } from '@/modules/role/role.module';
       /* 全局拦截器 */
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
+    },
+    /* 全局守卫，身份认证 */
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

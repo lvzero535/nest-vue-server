@@ -42,11 +42,9 @@ export class UserService {
     };
   }
   async create(userDto: UserDto) {
-    const user = await this.usersRepository.findOneBy({
-      username: userDto.username,
-    });
+    const user = await this.findUserByUserName(userDto.username, false);
     if (user) {
-      throw new BusinessException(ErrorCodeEnum.DuplicateRecord);
+      throw new BusinessException(ErrorCodeEnum.DUPLICATE_RECORD);
     }
     const roles = isEmpty(userDto.roleIds)
       ? []
@@ -78,6 +76,14 @@ export class UserService {
         id,
       },
       relations: ['roles'],
+    });
+  }
+  findUserByUserName(username: string, withRoles = true) {
+    return this.usersRepository.findOne({
+      where: {
+        username,
+      },
+      relations: withRoles ? ['roles'] : [],
     });
   }
 }
