@@ -1,8 +1,8 @@
 export {};
 declare global {
   interface IAuthUser {
-    uid: number;
+    uid: string;
     username: string;
-    roles: string[];
+    roleIds: string[];
   }
 }

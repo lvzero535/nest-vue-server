@@ -86,4 +86,17 @@ export class UserService {
       relations: withRoles ? ['roles'] : [],
     });
   }
+
+  async getAccountInfo(id: string) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new BusinessException(ErrorCodeEnum.INVALID_LOGIN);
+    }
+    delete user.password;
+    return user;
+  }
+
+  getAccountMenus(roleIds: string[]) {
+    return this.roleService.findRolesOfMenus(roleIds);
+  }
 }

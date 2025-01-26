@@ -25,7 +25,7 @@ export class RoleEntity extends CommonEntity {
   @Column()
   status: boolean;
 
-  @ManyToMany(() => MenuEntity)
+  @ManyToMany(() => MenuEntity, (menu) => menu.roles)
   @JoinTable()
   menus: MenuEntity[];
 }

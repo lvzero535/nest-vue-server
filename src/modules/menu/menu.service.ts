@@ -1,39 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { In, TreeRepository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { MenuEntity } from './menu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MenuDto } from './menu.dto';
-import { traverseTree } from '@/helper/tree';
+import { RoleEntity } from '../role/role.entity';
+import { listToTree } from '@/helper/tree';
 
 @Injectable()
 export class MenuService {
   constructor(
     @InjectRepository(MenuEntity)
-    private readonly menuRepository: TreeRepository<MenuEntity>,
+    private readonly menuRepository: Repository<MenuEntity>,
   ) {}
 
   async findAll() {
-    const list = await this.menuRepository.findTrees({
-      relations: ['parent'],
-    });
+    const list = await this.menuRepository.find();
     return {
-      list: traverseTree(list, (node: MenuEntity) => {
-        if (!node.children.length) {
-          node.children = null;
-        }
-      }),
+      list: listToTree(list),
       total: list.length,
     };
   }
 
   async create(body: MenuDto) {
-    const parent = await this.menuRepository.findOne({
-      where: { id: body.parentId },
-    });
-    return await this.menuRepository.save({
-      ...body,
-      parent,
-    });
+    return await this.menuRepository.save(body);
   }
 
   delete(ids: MenuEntity['id'][]) {
@@ -41,18 +30,11 @@ export class MenuService {
   }
 
   async update(id: MenuEntity['id'], body: MenuDto) {
-    const parent = await this.menuRepository.findOne({
-      where: { id: body.parentId },
-    });
-    return await this.menuRepository.update(id, {
-      ...body,
-      parent,
-    });
+    return await this.menuRepository.update(id, body);
   }
   async findOne(id: MenuEntity['id']) {
     return await this.menuRepository.findOne({
       where: { id },
-      relations: ['parent'],
     });
   }
 
@@ -60,5 +42,17 @@ export class MenuService {
     return await this.menuRepository.findBy({
       id: In(ids),
     });
+  }
+  async findMenuByRoleIds(ids: RoleEntity['id'][]) {
+    const list = await this.menuRepository
+      .createQueryBuilder('menu')
+      .leftJoinAndSelect('menu.roles', 'role')
+      .andWhere('role.id IN (:...ids)', { ids })
+      .getMany();
+
+    return {
+      list: listToTree(list),
+      total: list.length,
+    };
   }
 }

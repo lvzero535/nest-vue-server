@@ -8,10 +8,13 @@ import { ISecurityConfig, securityRegToken } from '@/config/security.config';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthTestController } from './test/authTest.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { AccountController } from './controllers/account.controller';
+import { MenuModule } from '../menu/menu.module';
 
 @Module({
   imports: [
     UserModule,
+    MenuModule,
     /**
      * https://github.com/nestjs/jwt/blob/master/README.md
      */
@@ -30,7 +33,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       },
     }),
   ],
-  controllers: [AuthController, AuthTestController],
+  controllers: [AuthController, AuthTestController, AccountController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}

@@ -1,5 +1,6 @@
 import { CommonEntity } from '@/common/entity/common.entity';
-import { Column, Entity, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Column, Entity, ManyToMany, Relation } from 'typeorm';
+import { RoleEntity } from '../role/role.entity';
 
 export enum MenuTypeEnum {
   CATALOG = 0, // 目录
@@ -8,10 +9,12 @@ export enum MenuTypeEnum {
 }
 
 @Entity({ name: 'app_menu' })
-@Tree('materialized-path')
 export class MenuEntity extends CommonEntity {
   @Column({ unique: true })
   name: string;
+
+  @Column({ name: 'parent_id', nullable: true })
+  parentId: string;
 
   @Column({
     type: 'enum',
@@ -39,10 +42,12 @@ export class MenuEntity extends CommonEntity {
   /* 是否启用 */
   @Column({ default: true })
   status: boolean;
-
-  @TreeParent({ onDelete: 'SET NULL' })
-  parent?: MenuEntity;
-
-  @TreeChildren({ cascade: true })
-  children: MenuEntity[];
+  /**
+   * Relation, ESM中避免循环依赖 https://www.typeorm.org/#%E5%9C%A8-esm-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E5%85%B3%E7%B3%BB
+   * @param cascade 级联删除
+   */
+  @ManyToMany(() => RoleEntity, (role) => role.menus, {
+    onDelete: 'CASCADE',
+  })
+  roles: Relation<RoleEntity[]>;
 }

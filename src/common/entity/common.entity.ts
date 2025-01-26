@@ -9,7 +9,7 @@ export abstract class CommonEntity extends BaseEntity {
   /**
    * 创建一个自增的主键
    */
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   /**

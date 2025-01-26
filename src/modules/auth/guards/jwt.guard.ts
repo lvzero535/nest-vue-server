@@ -1,6 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthStrategy, SKIP_AUTH_KEY } from '../auth.constant';
+import { AuthStrategy, PUBLIC_KEY } from '../auth.constant';
 import { Reflector } from '@nestjs/core';
 import { BusinessException } from '@/common/exceptions/business.exception';
 import { ErrorCodeEnum } from '@/constants/error-code.constant';
@@ -15,7 +15,7 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
     super();
   }
   canActivate(context: ExecutionContext) {
-    const skipAuth = this.reflector.getAllAndOverride<boolean>(SKIP_AUTH_KEY, [
+    const skipAuth = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);

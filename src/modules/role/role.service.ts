@@ -52,7 +52,6 @@ export class RoleService {
     const menus = isEmpty(roleDto.menuIds)
       ? []
       : await this.menuService.findMenuByIds(roleDto.menuIds);
-    console.log('query menus', menus);
     return this.rolesRepository.save({
       ...roleDto,
       menus,
@@ -92,6 +91,14 @@ export class RoleService {
   findRoleByIds(ids: RoleEntity['id'][]) {
     return this.rolesRepository.findBy({
       id: In(ids),
+    });
+  }
+  findRolesOfMenus(ids: RoleEntity['id'][]) {
+    return this.rolesRepository.find({
+      where: {
+        id: In(ids),
+      },
+      relations: ['menus'],
     });
   }
 }
