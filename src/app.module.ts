@@ -12,6 +12,7 @@ import { MenuModule } from '@/modules/menu/menu.module';
 import { RoleModule } from '@/modules/role/role.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
+import { RbacGuard } from './modules/auth/guards/rbac.guard';
 
 @Module({
   imports: [
@@ -51,6 +52,11 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    // /* 全局守卫，权限验证 */
+    {
+      provide: APP_GUARD,
+      useClass: RbacGuard,
     },
   ],
 })

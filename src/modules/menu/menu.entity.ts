@@ -2,24 +2,21 @@ import { CommonEntity } from '@/common/entity/common.entity';
 import { Column, Entity, ManyToMany, Relation } from 'typeorm';
 import { RoleEntity } from '../role/role.entity';
 
-export enum MenuTypeEnum {
-  CATALOG = 0, // 目录
-  MENU = 1, // 菜单
-  BUTTON = 2, // 按钮
-}
-
 @Entity({ name: 'app_menu' })
 export class MenuEntity extends CommonEntity {
-  @Column({ unique: true })
+  @Column({ nullable: false })
   name: string;
 
   @Column({ name: 'parent_id', nullable: true })
   parentId: string;
 
+  /**
+   * 使用枚举时,这里会把枚举值的数字转换为字符串, 查询时使用数字查询不到
+   *
+   * 菜单类型 0-目录 1-菜单 2-按钮 */
   @Column({
-    type: 'enum',
-    enum: MenuTypeEnum,
-    default: MenuTypeEnum.MENU,
+    type: 'tinyint',
+    default: 1,
   })
   type: number;
 

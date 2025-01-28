@@ -4,5 +4,6 @@ declare global {
     uid: string;
     username: string;
     roleIds: string[];
+    roleNames: string[];
   }
 }

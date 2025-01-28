@@ -5,12 +5,14 @@ import { BusinessException } from '@/common/exceptions/business.exception';
 import { ErrorCodeEnum } from '@/constants/error-code.constant';
 import { JwtService } from '@nestjs/jwt';
 import { DEMO_ACCOUNT, isDemo } from './auth.constant';
+import { MenuService } from '../menu/menu.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private menuService: MenuService,
   ) {}
 
   async getAuthUser(authDto: AuthDto) {
@@ -34,10 +36,15 @@ export class AuthService {
       uid: user.id,
       username: user.username,
       roleIds: user.roles.map((i) => i.id),
+      roleNames: user.roles.map((i) => i.name),
     };
     const accessToken = await this.jwtService.signAsync(payload);
     return {
       access_token: accessToken,
     };
+  }
+
+  async getPermissions(roleIds: string[]) {
+    return this.menuService.getPermissions(roleIds);
   }
 }

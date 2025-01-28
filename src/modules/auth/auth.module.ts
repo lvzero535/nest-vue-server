@@ -35,5 +35,6 @@ import { MenuModule } from '../menu/menu.module';
   ],
   controllers: [AuthController, AuthTestController, AccountController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

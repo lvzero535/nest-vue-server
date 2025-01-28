@@ -1,8 +1,6 @@
-import { MenuTypeEnum } from './menu.entity';
-
 export class MenuDto {
   name: string;
-  type: MenuTypeEnum;
+  type: number;
   path: string;
   icon?: string;
   order?: number;

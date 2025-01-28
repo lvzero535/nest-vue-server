@@ -20,7 +20,16 @@ export class RoleService {
     private readonly menuService: MenuService,
   ) {}
 
-  async findAllRoles({
+  async findAdmin() {
+    // TODO: 缓存
+    return this.rolesRepository.find({
+      where: {
+        value: 'super',
+      },
+    });
+  }
+
+  async list({
     page,
     pageSize,
     search,

@@ -19,7 +19,6 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
       context.getHandler(),
       context.getClass(),
     ]);
-
     // 跳过验证
     if (skipAuth) {
       return true;
