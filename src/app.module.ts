@@ -13,6 +13,7 @@ import { RoleModule } from '@/modules/role/role.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
 import { RbacGuard } from './modules/auth/guards/rbac.guard';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { RbacGuard } from './modules/auth/guards/rbac.guard';
     MenuModule,
     RoleModule,
     AuthModule,
+    SharedModule,
   ],
   controllers: [AppController],
   providers: [

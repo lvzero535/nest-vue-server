@@ -16,7 +16,7 @@ export function traverseTree<T>(
   return tree;
 }
 
-export function listToTree<T extends { id: string }>(
+export function listToTree<T extends { id: number }>(
   list: T[],
   options: {
     childrenKey?: string;
@@ -28,7 +28,7 @@ export function listToTree<T extends { id: string }>(
   const {
     childrenKey = 'children',
     parentKey = 'parentId',
-    rootValue = '-1',
+    rootValue = -1,
     isEmptyChildren = false, // 是否保留空children的节点
   } = options;
 

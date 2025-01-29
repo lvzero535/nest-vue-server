@@ -4,8 +4,8 @@ import { UserService } from '../user/user.service';
 import { BusinessException } from '@/common/exceptions/business.exception';
 import { ErrorCodeEnum } from '@/constants/error-code.constant';
 import { JwtService } from '@nestjs/jwt';
-import { DEMO_ACCOUNT, isDemo } from './auth.constant';
 import { MenuService } from '../menu/menu.service';
+import { SharedConfigService } from '@/shared/services/config.service';
 
 @Injectable()
 export class AuthService {
@@ -13,12 +13,13 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private menuService: MenuService,
+    private configService: SharedConfigService,
   ) {}
 
   async getAuthUser(authDto: AuthDto) {
     // 如果是demo账号，直接返回demo账号
-    if (isDemo) {
-      return DEMO_ACCOUNT;
+    if (this.configService.getAppConfig('isDemoMode')) {
+      return this.configService.getDemoAccount();
     }
 
     // 校验用户名密码
@@ -36,7 +37,6 @@ export class AuthService {
       uid: user.id,
       username: user.username,
       roleIds: user.roles.map((i) => i.id),
-      roleNames: user.roles.map((i) => i.name),
     };
     const accessToken = await this.jwtService.signAsync(payload);
     return {
@@ -44,7 +44,7 @@ export class AuthService {
     };
   }
 
-  async getPermissions(roleIds: string[]) {
+  async getPermissions(roleIds: number[]) {
     return this.menuService.getPermissions(roleIds);
   }
 }

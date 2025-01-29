@@ -14,6 +14,7 @@ import {
   definePermission,
   Perm,
 } from '../auth/decorators/permission.decorator';
+import { ROOT_ROLE_ID } from '@/constants/system.constant';
 export const permissions = definePermission('system:role', {
   LIST: 'list',
   DETAIL: 'detail',
@@ -43,12 +44,16 @@ export class RoleController {
   }
   @Get(':id')
   @Perm(permissions.DELETE)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
+    console.log('id', id, typeof id);
+    if (Number(id) === ROOT_ROLE_ID) {
+      return this.roleService.findAdminRole(id);
+    }
     return this.roleService.findOne(id);
   }
   @Put(':id')
   @Perm(permissions.UPDATE)
-  updateRole(@Param('id') id: string, @Body() roleDto: RoleDto) {
+  updateRole(@Param('id') id: number, @Body() roleDto: RoleDto) {
     return this.roleService.update(id, roleDto);
   }
 }

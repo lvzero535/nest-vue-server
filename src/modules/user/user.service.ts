@@ -57,7 +57,7 @@ export class UserService {
   delete(id: number[]) {
     return this.usersRepository.delete(id);
   }
-  async update(id: string, userDto: UserDto) {
+  async update(id: number, userDto: UserDto) {
     const user = await this.findOne(id);
     // const user = this.findOne(id);
     const roles = isEmpty(userDto.roleIds)
@@ -70,7 +70,7 @@ export class UserService {
       ...userDto,
     });
   }
-  findOne(id: string) {
+  findOne(id: number) {
     return this.usersRepository.findOne({
       where: {
         id,
@@ -87,16 +87,12 @@ export class UserService {
     });
   }
 
-  async getAccountInfo(id: string) {
+  async getAccountInfo(id: number) {
     const user = await this.findOne(id);
     if (!user) {
       throw new BusinessException(ErrorCodeEnum.INVALID_LOGIN);
     }
     delete user.password;
     return user;
-  }
-
-  getAccountMenus(roleIds: string[]) {
-    return this.roleService.findRolesOfMenus(roleIds);
   }
 }

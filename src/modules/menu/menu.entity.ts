@@ -8,7 +8,7 @@ export class MenuEntity extends CommonEntity {
   name: string;
 
   @Column({ name: 'parent_id', nullable: true })
-  parentId: string;
+  parentId: number;
 
   /**
    * 使用枚举时,这里会把枚举值的数字转换为字符串, 查询时使用数字查询不到

@@ -20,15 +20,6 @@ export class RoleService {
     private readonly menuService: MenuService,
   ) {}
 
-  async findAdmin() {
-    // TODO: 缓存
-    return this.rolesRepository.find({
-      where: {
-        value: 'super',
-      },
-    });
-  }
-
   async list({
     page,
     pageSize,
@@ -75,7 +66,7 @@ export class RoleService {
    * @param id
    * @param roleDto
    */
-  async update(id: string, roleDto: RoleDto) {
+  async update(id: number, roleDto: RoleDto) {
     const role = await this.findOne(id);
     // const role = this.findOne(id);
     const menus = isEmpty(roleDto.menuIds)
@@ -88,7 +79,7 @@ export class RoleService {
       ...roleDto,
     });
   }
-  findOne(id: string) {
+  findOne(id: number) {
     return this.rolesRepository.findOne({
       where: {
         id,
@@ -97,17 +88,20 @@ export class RoleService {
     });
   }
 
-  findRoleByIds(ids: RoleEntity['id'][]) {
+  async findAdminRole(id: number) {
+    const menus = await this.menuService.findAllList();
+    const role = await this.rolesRepository.findOneBy({
+      id,
+    });
+    return {
+      ...role,
+      menus: menus.list,
+    };
+  }
+
+  findRoleByIds(ids: number[]) {
     return this.rolesRepository.findBy({
       id: In(ids),
-    });
-  }
-  findRolesOfMenus(ids: RoleEntity['id'][]) {
-    return this.rolesRepository.find({
-      where: {
-        id: In(ids),
-      },
-      relations: ['menus'],
     });
   }
 }

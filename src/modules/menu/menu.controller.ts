@@ -31,7 +31,7 @@ export class MenuController {
   @Get()
   @Perm(permissions.LIST)
   getList() {
-    return this.menuService.findAll();
+    return this.menuService.findAllTree();
   }
 
   @Post()
@@ -42,13 +42,13 @@ export class MenuController {
 
   @Delete()
   @Perm(permissions.DELETE)
-  delete(@Body('ids') ids: string[]) {
+  delete(@Body('ids') ids: number[]) {
     return this.menuService.delete(ids);
   }
 
   @Put(':id')
   @Perm(permissions.UPDATE)
-  update(@Param('id') id: string, @Body() body: MenuDto) {
+  update(@Param('id') id: number, @Body() body: MenuDto) {
     return this.menuService.update(id, body);
   }
 
@@ -63,7 +63,7 @@ export class MenuController {
 
   @Get(':id')
   @Perm(permissions.DETAIL)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.menuService.findOne(id);
   }
 }

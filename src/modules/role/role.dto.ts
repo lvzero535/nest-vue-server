@@ -6,5 +6,5 @@ export class RoleDto {
   value: string;
   remark: string;
   status: boolean;
-  menuIds: string[];
+  menuIds: number[];
 }

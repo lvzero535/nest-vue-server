@@ -28,11 +28,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, AuthStrategy.JWT) {
    * @returns 返回payload，会把payload放到req.user中。
    */
   async validate(payload: IAuthUser) {
-    return {
-      uid: payload.uid,
-      username: payload.username,
-      roleIds: payload.roleIds,
-      roleNames: payload.roleNames,
-    };
+    return payload;
   }
 }

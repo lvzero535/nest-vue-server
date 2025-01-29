@@ -5,6 +5,6 @@ export class MenuDto {
   icon?: string;
   order?: number;
   status?: boolean;
-  parentId?: string;
+  parentId?: number;
   permission?: string;
 }

@@ -7,13 +7,6 @@ export const AuthStrategy = {
   JWT: 'jwt',
 };
 
-export const isDemo = false;
-export const DEMO_ACCOUNT = {
-  id: '__demo_id__',
-  username: '_demo_',
-  roles: [],
-};
-
 export const Roles = {
   ADMIN: 'admin',
 };

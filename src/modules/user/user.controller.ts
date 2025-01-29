@@ -47,12 +47,12 @@ export class UserController {
   }
   @Get(':id')
   @Perm(permissions.DETAIL)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.userService.findOne(id);
   }
   @Put(':id')
   @Perm(permissions.UPDATE)
-  updateUser(@Param('id') id: string, @Body() userDto: UserDto) {
+  updateUser(@Param('id') id: number, @Body() userDto: UserDto) {
     return this.userService.update(id, userDto);
   }
 }

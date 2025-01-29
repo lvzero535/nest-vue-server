@@ -1,14 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import {
-  ALLOW_ANON_KEY,
-  PERMISSION_KEY,
-  PUBLIC_KEY,
-  Roles,
-} from '../auth.constant';
+import { ALLOW_ANON_KEY, PERMISSION_KEY, PUBLIC_KEY } from '../auth.constant';
 import { BusinessException } from '@/common/exceptions/business.exception';
 import { ErrorCodeEnum } from '@/constants/error-code.constant';
 import { AuthService } from '../auth.service';
+import { SharedConfigService } from '@/shared/services/config.service';
+import { ROOT_ROLE_ID } from '@/constants/system.constant';
 
 /**
  * RBAC (Role-Based Access Control，基於角色的存取控制)
@@ -18,6 +15,7 @@ export class RbacGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private authService: AuthService,
+    private configService: SharedConfigService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // 校验接口是否是公开的
@@ -34,6 +32,12 @@ export class RbacGuard implements CanActivate {
     const user: IAuthUser = request.user;
     if (!user) {
       throw new BusinessException(ErrorCodeEnum.INVALID_LOGIN);
+    }
+
+    // 如果是demo账号，直接返回true
+    if (this.configService.getAppConfig('isDemoMode')) {
+      console.log('====开启演示模式====');
+      return true;
     }
 
     // 校验用户是否不需要操作权限
@@ -59,7 +63,7 @@ export class RbacGuard implements CanActivate {
     }
 
     // 如果用户是管理员，直接返回true
-    if (user.roleNames.includes(Roles.ADMIN)) {
+    if (user.roleIds.includes(ROOT_ROLE_ID)) {
       return true;
     }
 
