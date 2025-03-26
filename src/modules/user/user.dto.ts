@@ -5,4 +5,5 @@ export class UserDto {
   username: string;
   password: string;
   roleIds: number[];
+  deptId: number;
 }

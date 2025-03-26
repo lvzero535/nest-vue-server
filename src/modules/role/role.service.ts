@@ -27,12 +27,18 @@ export class RoleService {
   }): Promise<{ list: RoleEntity[]; total: number }> {
     const queryBuilder = this.rolesRepository
       .createQueryBuilder('role')
+      // https://github.com/typeorm/typeorm/issues/3941#issuecomment-480290531
+      .addSelect(
+        `CASE WHEN role.name = 'admin' THEN 1 ELSE 2 END`,
+        'default_sort',
+      )
       /* 第一个参数是您要加载的关联关系，第二个参数是您为该关联关系的表分配的别名。 */
       .leftJoinAndSelect('role.menus', 'menu')
       .where({
         name: Like(`%${search ? search : ''}%`),
       })
-      .orderBy('role.createAt', 'DESC')
+      .orderBy('default_sort')
+      .addOrderBy('role.createAt', 'DESC')
       .skip((page - 1) * pageSize)
       .take(pageSize);
 

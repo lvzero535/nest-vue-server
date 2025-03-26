@@ -7,6 +7,7 @@ import { BusinessException } from '@/common/exceptions/business.exception';
 import { ErrorCodeEnum } from '@/constants/error-code.constant';
 import { isEmpty } from 'lodash';
 import { RoleService } from '../role/role.service';
+import { DeptService } from '../dept/dept.service';
 
 @Injectable()
 export class UserService {
@@ -18,22 +19,40 @@ export class UserService {
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     private roleService: RoleService,
+    private deptService: DeptService,
   ) {}
 
   async findAllUsers({
     page,
     pageSize,
     search,
+    deptId,
   }): Promise<{ list: UserEntity[]; total: number }> {
+    console.log('deptId ===> ', deptId);
+    const dept = await this.deptService.findDescendant(deptId);
+    console.log(dept);
     const queryBuilder = this.usersRepository
       .createQueryBuilder('user')
+      // https://github.com/typeorm/typeorm/issues/3941#issuecomment-480290531
+      .addSelect(
+        `CASE WHEN user.username = 'admin' THEN 1 ELSE 2 END`,
+        'default_sort',
+      )
       .where({
         username: Like(`%${search}%`),
       })
       .leftJoinAndSelect('user.roles', 'role')
-      .orderBy('user.createAt', 'DESC')
+      .leftJoinAndSelect('user.dept', 'dept')
+      .orderBy('default_sort') // 使用addSelect里的语句先排序
+      .addOrderBy('user.createAt', 'DESC')
       .skip((page - 1) * pageSize)
       .take(pageSize);
+
+    if (!isEmpty(dept)) {
+      queryBuilder.andWhere('user.deptId IN (:...ids)', {
+        ids: dept.map((dept) => dept.id),
+      });
+    }
 
     const [list, total] = await queryBuilder.getManyAndCount();
     return {
@@ -46,11 +65,15 @@ export class UserService {
     if (user) {
       throw new BusinessException(ErrorCodeEnum.DUPLICATE_RECORD);
     }
+
+    const dept = await this.deptService.findOne(userDto.deptId);
+
     const roles = isEmpty(userDto.roleIds)
       ? []
       : await this.roleService.findRoleByIds(userDto.roleIds);
     return this.usersRepository.save({
       ...userDto,
+      dept,
       roles,
     });
   }
@@ -75,7 +98,7 @@ export class UserService {
       where: {
         id,
       },
-      relations: ['roles'],
+      relations: ['roles', 'dept'],
     });
   }
   findUserByUserName(username: string, withRoles = true) {

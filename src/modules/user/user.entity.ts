@@ -1,6 +1,7 @@
 import { CommonEntity } from '@/common/entity/common.entity';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { RoleEntity } from '../role/role.entity';
+import { DeptEntity } from '../dept/dept.entity';
 
 /**
  * @Entity 将当前类标记为实体，实体是一个被转化为数据库表的类
@@ -22,4 +23,7 @@ export class UserEntity extends CommonEntity {
   @ManyToMany(() => RoleEntity)
   @JoinTable()
   roles: RoleEntity[];
+
+  @ManyToOne(() => DeptEntity, (dept) => dept.users)
+  dept: DeptEntity;
 }

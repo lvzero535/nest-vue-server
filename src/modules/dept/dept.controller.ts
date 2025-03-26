@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { DeptService } from './dept.service';
 import { DeptDto } from './dept.dto';
 import {
@@ -26,5 +34,23 @@ export class DeptController {
   @Perm(permissions.CREATE)
   create(@Body() body: DeptDto) {
     return this.deptService.create(body);
+  }
+
+  @Put(':id')
+  @Perm(permissions.UPDATE)
+  update(@Param('id') id: number, @Body() body: DeptDto) {
+    return this.deptService.update(id, body);
+  }
+
+  @Delete()
+  @Perm(permissions.DELETE)
+  delete(@Body('ids') ids: number[]) {
+    return this.deptService.delete(ids);
+  }
+
+  @Get(':id')
+  @Perm(permissions.DETAIL)
+  findOne(@Param('id') id: number) {
+    return this.deptService.findOne(id);
   }
 }

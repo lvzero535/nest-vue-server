@@ -30,7 +30,13 @@ export class UserController {
   @Get()
   @Perm(permissions.LIST)
   findAllUsers(
-    @Query() query: { page: number; pageSize: number; search: string },
+    @Query()
+    query: {
+      page: number;
+      pageSize: number;
+      search: string;
+      deptId: number;
+    },
   ) {
     return this.userService.findAllUsers(query);
   }
