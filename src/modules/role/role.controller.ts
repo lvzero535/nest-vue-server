@@ -45,7 +45,6 @@ export class RoleController {
   @Get(':id')
   @Perm(permissions.DELETE)
   findOne(@Param('id') id: number) {
-    console.log('id', id, typeof id);
     if (Number(id) === ROOT_ROLE_ID) {
       return this.roleService.findAdminRole(id);
     }

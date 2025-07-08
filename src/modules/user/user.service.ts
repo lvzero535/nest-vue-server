@@ -8,6 +8,7 @@ import { ErrorCodeEnum } from '@/constants/error-code.constant';
 import { isEmpty } from 'lodash';
 import { RoleService } from '../role/role.service';
 import { DeptService } from '../dept/dept.service';
+import { FileUploadService } from '../file-upload/file-upload.service';
 
 @Injectable()
 export class UserService {
@@ -20,6 +21,7 @@ export class UserService {
     private usersRepository: Repository<UserEntity>,
     private roleService: RoleService,
     private deptService: DeptService,
+    private fileUploadService: FileUploadService,
   ) {}
 
   async findAllUsers({
@@ -28,9 +30,7 @@ export class UserService {
     search,
     deptId,
   }): Promise<{ list: UserEntity[]; total: number }> {
-    console.log('deptId ===> ', deptId);
     const dept = await this.deptService.findDescendant(deptId);
-    console.log(dept);
     const queryBuilder = this.usersRepository
       .createQueryBuilder('user')
       // https://github.com/typeorm/typeorm/issues/3941#issuecomment-480290531
@@ -43,6 +43,8 @@ export class UserService {
       })
       .leftJoinAndSelect('user.roles', 'role')
       .leftJoinAndSelect('user.dept', 'dept')
+      .leftJoin('user.avatar', 'avatar')
+      .addSelect('avatar.filename')
       .orderBy('default_sort') // 使用addSelect里的语句先排序
       .addOrderBy('user.createAt', 'DESC')
       .skip((page - 1) * pageSize)
@@ -71,9 +73,19 @@ export class UserService {
     const roles = isEmpty(userDto.roleIds)
       ? []
       : await this.roleService.findRoleByIds(userDto.roleIds);
+
+    const avatar = isEmpty(userDto.avatar)
+      ? null
+      : await this.fileUploadService.findOne(userDto.avatar);
+
+    if (avatar) {
+      this.fileUploadService.saveNormalFile(avatar);
+    }
+
     return this.usersRepository.save({
       ...userDto,
       dept,
+      avatar,
       roles,
     });
   }
@@ -87,10 +99,19 @@ export class UserService {
       ? []
       : await this.roleService.findRoleByIds(userDto.roleIds);
 
+    const avatar = isEmpty(userDto.avatar)
+      ? user.avatar
+      : await this.fileUploadService.findOne(userDto.avatar);
+
+    if (!isEmpty(userDto.avatar)) {
+      this.fileUploadService.saveNormalFile(avatar);
+    }
+
     user.roles = roles;
     return this.usersRepository.save({
       ...user,
       ...userDto,
+      avatar,
     });
   }
   findOne(id: number) {
@@ -98,7 +119,7 @@ export class UserService {
       where: {
         id,
       },
-      relations: ['roles', 'dept'],
+      relations: ['roles', 'dept', 'avatar'],
     });
   }
   findUserByUserName(username: string, withRoles = true) {

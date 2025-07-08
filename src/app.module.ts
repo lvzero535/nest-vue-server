@@ -14,6 +14,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
 import { RbacGuard } from './modules/auth/guards/rbac.guard';
 import { SharedModule } from './shared/shared.module';
+import { FileUploadModule } from './modules/file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { SharedModule } from './shared/shared.module';
     RoleModule,
     AuthModule,
     SharedModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [

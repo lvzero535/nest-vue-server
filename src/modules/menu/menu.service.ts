@@ -34,7 +34,6 @@ export class MenuService {
         permission: In(permissions),
       },
     });
-    console.log('permissions ===>', existButtonPerm);
     if (!isEmpty(existButtonPerm)) {
       throw new BusinessException(ErrorCodeEnum.PERM_EXIST_IN_MENU);
     }

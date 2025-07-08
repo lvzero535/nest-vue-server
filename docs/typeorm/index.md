@@ -3,6 +3,14 @@
 ## leftJoinAndSelect函数
 
 第一个参数是您要加载的关联关系，第二个参数是您为该关联关系的表分配的别名。
+当使用leftJoinAndSelect时，typeorm会默认加载关联关系的所有字段。
+如果想要只加载关联关系的部分字段，可以使用leftJoin函数，配全addSelect。
+如下：只加载关联关系的filename字段
+
+```ts
+.leftJoin('user.avatar', 'avatar')
+.addSelect('avatar.filename')
+```
 
 ## addSelect函数
 

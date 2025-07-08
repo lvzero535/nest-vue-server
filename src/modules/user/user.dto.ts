@@ -6,4 +6,5 @@ export class UserDto {
   password: string;
   roleIds: number[];
   deptId: number;
+  avatar?: string;
 }
