@@ -1,7 +1,7 @@
 import { ConfigType, registerAs } from '@nestjs/config';
-import { envBoolean } from '@/global/env';
+import { env, envBoolean, envNumber } from '@/global/env';
 
-export const appRegToken = 'appRegToken';
+export const appRegToken = 'app';
 
 /**
  * 在registerAs第二个参数的工厂函数中process.env对象将包含完全解析的环境变量键/值对
@@ -14,6 +14,10 @@ export const AppConfig = registerAs(appRegToken, () => {
       id: -1,
       username: '__inner_demo_account__',
       roles: [],
+    },
+    logger: {
+      level: env('LOGGER_LEVEL', 'info'),
+      maxFiles: envNumber('LOGGER_MAX_FILES', 10),
     },
   };
 });
