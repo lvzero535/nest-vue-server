@@ -15,6 +15,8 @@ import {
   Perm,
 } from '../auth/decorators/permission.decorator';
 import { ROOT_ROLE_ID } from '@/constants/system.constant';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PagerDto } from '@/common/dto/pager.dto';
 export const permissions = definePermission('system:role', {
   LIST: 'list',
   DETAIL: 'detail',
@@ -22,13 +24,16 @@ export const permissions = definePermission('system:role', {
   UPDATE: 'update',
   DELETE: 'delete',
 });
+
+@ApiTags('System - 角色管理')
+@ApiBearerAuth()
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Get()
   @Perm(permissions.LIST)
-  list(@Query() query: { page: number; pageSize: number; search: string }) {
+  list(@Query() query: PagerDto) {
     return this.roleService.list(query);
   }
 

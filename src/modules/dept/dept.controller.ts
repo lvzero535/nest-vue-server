@@ -13,6 +13,8 @@ import {
   definePermission,
   Perm,
 } from '../auth/decorators/permission.decorator';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiPaginatedResponse } from '@/common/decorators/swagger-api-result.decorator';
 export const permissions = definePermission('system:dept', {
   LIST: 'list',
   DETAIL: 'detail',
@@ -20,12 +22,16 @@ export const permissions = definePermission('system:dept', {
   UPDATE: 'update',
   DELETE: 'delete',
 });
+
+@ApiTags('System - 部门管理')
+@ApiBearerAuth()
 @Controller('dept')
 export class DeptController {
   constructor(private readonly deptService: DeptService) {}
 
   @Get()
   @Perm(permissions.LIST)
+  @ApiPaginatedResponse(DeptDto)
   getList() {
     return this.deptService.findAll();
   }
@@ -43,6 +49,17 @@ export class DeptController {
   }
 
   @Delete()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: { type: 'number' },
+        },
+      },
+    },
+  })
   @Perm(permissions.DELETE)
   delete(@Body('ids') ids: number[]) {
     return this.deptService.delete(ids);

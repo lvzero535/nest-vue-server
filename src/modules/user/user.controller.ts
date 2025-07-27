@@ -14,6 +14,12 @@ import {
   definePermission,
   Perm,
 } from '../auth/decorators/permission.decorator';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
 export const permissions = definePermission('system:user', {
   LIST: 'list',
@@ -23,11 +29,36 @@ export const permissions = definePermission('system:user', {
   DELETE: 'delete',
 });
 
+// 这是给用户管理模块的 API 文档添标题，如果不写这个，默认为Controller里的参数 User
+@ApiTags('System - 用户管理')
+@ApiBearerAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiQuery({
+    name: 'page',
+    required: true,
+    type: Number,
+    description: '页码（从1开始）',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: true,
+    type: Number,
+    description: '每页数量',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'deptId',
+    required: true,
+    type: Number,
+    description: '部门ID',
+    example: -1,
+  })
   @Get()
+  @ApiOperation({ summary: '用户列表' })
   @Perm(permissions.LIST)
   findAllUsers(
     @Query()

@@ -14,6 +14,7 @@ import {
   getAllDefinePermissions,
   Perm,
 } from '../auth/decorators/permission.decorator';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 export const permissions = definePermission('system:menu', {
   LIST: 'list',
@@ -24,6 +25,9 @@ export const permissions = definePermission('system:menu', {
   IMPORT: 'import',
   DETAIL: 'detail',
 });
+
+@ApiTags('System - 菜单')
+@ApiBearerAuth()
 @Controller('menu')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}

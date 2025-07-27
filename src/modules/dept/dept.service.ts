@@ -40,14 +40,17 @@ export class DeptService {
   }
 
   async update(id: number, body: DeptDto) {
-    const parent = await this.deptTreeRepository.findOne({
-      where: { id: body.parentId },
-    });
-    return await this.deptTreeRepository.save({
-      id,
-      ...omit(body, ['parentId']),
-      parent,
-    });
+    const [self, parent] = await Promise.all([
+      this.deptTreeRepository.findOne({
+        where: { id },
+      }),
+      this.deptTreeRepository.findOne({
+        where: { id: body.parentId },
+      }),
+    ]);
+    self.parent = parent;
+    self.name = body.name;
+    return await this.deptTreeRepository.save(self);
   }
   async delete(ids: number[]) {
     return await this.deptTreeRepository.delete(ids);

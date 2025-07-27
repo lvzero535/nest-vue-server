@@ -27,7 +27,7 @@ export class UserService {
   async findAllUsers({
     page,
     pageSize,
-    search,
+    search = '',
     deptId,
   }): Promise<{ list: UserEntity[]; total: number }> {
     const dept = await this.deptService.findDescendant(deptId);
