@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:22.17-slim AS base
 
 ARG PROJECT_DIR
 

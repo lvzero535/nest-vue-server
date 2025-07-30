@@ -16,24 +16,18 @@ BACKEND_IMAGE="x/nest-vue-server:latest"
 echo "🚀 开始部署..."
 
 # === 拉取或更新前端仓库 ===
+echo "⬇️ 克隆前端仓库..."
 if [ -d "$FRONTEND_DIR/.git" ]; then
-  echo "🔄 更新前端仓库..."
-  cd "$FRONTEND_DIR"
-  git pull
-else
-  echo "⬇️ 克隆前端仓库..."
-  git clone "$FRONTEND_REPO" "$FRONTEND_DIR"
+  rm -rf "$FRONTEND_DIR"/*
 fi
+git clone "$FRONTEND_REPO" "$FRONTEND_DIR"
 
 # === 拉取或更新后端仓库 ===
+echo "⬇️ 克隆后端仓库..."
 if [ -d "$BACKEND_DIR/.git" ]; then
-  echo "🔄 更新后端仓库..."
-  cd "$BACKEND_DIR"
-  git pull
-else
-  echo "⬇️ 克隆后端仓库..."
-  git clone "$BACKEND_REPO" "$BACKEND_DIR"
+  rm -rf "$BACKEND_DIR"/*
 fi
+git clone "$BACKEND_REPO" "$BACKEND_DIR"
 
 # === 构建前端镜像 ===
 echo "🔧 构建前端镜像..."
