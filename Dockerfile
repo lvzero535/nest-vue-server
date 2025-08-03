@@ -23,13 +23,13 @@ FROM base AS prod-deps
 # 使用 Docker Buildkit 的缓存功能，将 pnpm 存储目录 /pnpm/store 进行缓存，避免重复下载依赖
 # --prod 表示只安装生产环境依赖，
 # --frozen-lockfile 确保按照 pnpm-lock.yaml 文件中的版本安装依赖，若版本不匹配则安装失败。
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --ignore-scripts
 
 # 基于 base 阶段的镜像创建新的构建阶段，命名为 build。
 FROM base AS build
 
 # 同样使用缓存功能安装所有依赖，包括开发和生产环境依赖。
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --ignore-scripts
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
 # 基于 base 阶段的镜像构建最终镜像。
