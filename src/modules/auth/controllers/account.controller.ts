@@ -3,7 +3,6 @@ import { Controller, Get } from '@nestjs/common';
 import { AuthUser } from '../decorators/auth-user.decorator';
 import { MenuService } from '@/modules/menu/menu.service';
 import { isEmpty } from 'lodash';
-import { SharedConfigService } from '@/shared/services/config.service';
 import { ROOT_ROLE_ID } from '@/constants/system.constant';
 
 /**
@@ -15,15 +14,10 @@ export class AccountController {
   constructor(
     private userService: UserService,
     private menuService: MenuService,
-    private configService: SharedConfigService,
   ) {}
 
   @Get('profile')
   async profile(@AuthUser() user: IAuthUser) {
-    // 如果是demo账号，直接返回demo账号
-    if (this.configService.getAppConfig('isDemoMode')) {
-      return this.configService.getDemoAccount();
-    }
     return this.userService.getAccountInfo(user.uid);
   }
 

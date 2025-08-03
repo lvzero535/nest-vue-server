@@ -5,7 +5,6 @@ import { BusinessException } from '@/common/exceptions/business.exception';
 import { ErrorCodeEnum } from '@/constants/error-code.constant';
 import { JwtService } from '@nestjs/jwt';
 import { MenuService } from '../menu/menu.service';
-import { SharedConfigService } from '@/shared/services/config.service';
 
 @Injectable()
 export class AuthService {
@@ -13,15 +12,9 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private menuService: MenuService,
-    private configService: SharedConfigService,
   ) {}
 
   async getAuthUser(authDto: AuthDto) {
-    // 如果是demo账号，直接返回demo账号
-    if (this.configService.getAppConfig('isDemoMode')) {
-      return this.configService.getDemoAccount();
-    }
-
     // 校验用户名密码
     const user = await this.userService.findUserByUserName(authDto.username);
     if (!user || user?.password !== authDto.password) {

@@ -34,12 +34,6 @@ export class RbacGuard implements CanActivate {
       throw new BusinessException(ErrorCodeEnum.INVALID_LOGIN);
     }
 
-    // 如果是demo账号，直接返回true
-    if (this.configService.getAppConfig('isDemoMode')) {
-      console.log('====开启演示模式====');
-      return true;
-    }
-
     // 校验用户是否不需要操作权限
     const isAllowAnon = this.reflector.get<boolean>(
       ALLOW_ANON_KEY,

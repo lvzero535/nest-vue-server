@@ -10,7 +10,4 @@ export class SharedConfigService {
     const appConfig = this.configService.get<IAppConfig>(appRegToken);
     return key ? appConfig[key] : appConfig;
   }
-  getDemoAccount() {
-    return this.getAppConfig('demoAccount') as IAppConfig['demoAccount'];
-  }
 }

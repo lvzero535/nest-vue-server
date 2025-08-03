@@ -1,5 +1,5 @@
 import { ConfigType, registerAs } from '@nestjs/config';
-import { env, envBoolean, envNumber } from '@/global/env';
+import { env, envNumber } from '@/global/env';
 
 export const appRegToken = 'app';
 
@@ -9,12 +9,6 @@ export const appRegToken = 'app';
  */
 export const AppConfig = registerAs(appRegToken, () => {
   return {
-    isDemoMode: envBoolean('DEMO_MODE'),
-    demoAccount: {
-      id: -1,
-      username: '__inner_demo_account__',
-      roles: [],
-    },
     logger: {
       level: env('LOGGER_LEVEL', 'info'),
       maxFiles: envNumber('LOGGER_MAX_FILES', 10),
