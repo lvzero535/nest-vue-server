@@ -1,0 +1,34 @@
+name: Deploy to Server
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - product # 或你使用的部署分支
+
+jobs:
+  deploy:
+    name: Deploy via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ vars.REMOTE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Run deployment commands
+        run: |
+          ssh ${{ vars.REMOTE_USER }}@${{ vars.REMOTE_HOST }} << 'EOF'
+            rm ${{ vars.DEPLOY_PATH }} -rf
+            mkdir -p ${{ vars.DEPLOY_PATH }}
+            cd ${{ vars.DEPLOY_PATH }}
+            git clone ${{ vars.REPO}} .
+            chmod +x deploy.sh
+            bash ./deploy.sh
+          EOF
