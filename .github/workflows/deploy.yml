@@ -25,6 +25,7 @@ jobs:
       - name: Run deployment commands
         run: |
           ssh ${{ vars.REMOTE_USER }}@${{ vars.REMOTE_HOST }} << 'EOF'
+            rm ${{ vars.DEPLOY_PATH }} -rf
             mkdir -p ${{ vars.DEPLOY_PATH }}
             cd ${{ vars.DEPLOY_PATH }}
             git clone ${{ vars.REPO}} .
