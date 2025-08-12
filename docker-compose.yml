@@ -22,7 +22,7 @@ services:
       - '${DB_PORT}:3306'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci # 设置utf8字符集
     volumes:
-      - ./mysql/data:/var/lib/mysql
+      - /opt/www/mysql/data:/var/lib/mysql
       # 初始化mysql数据脚本，如果./mysql/data数据目录已存在，则不会执行初始化脚本
       - ./deploy/sql/:/docker-entrypoint-initdb.d/
     networks:
