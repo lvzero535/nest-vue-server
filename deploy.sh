@@ -2,6 +2,7 @@
 
 set -e  # 一旦出错就退出脚本
 set -o pipefail
+set -x
 
 # === 配置 ===
 FRONTEND_REPO="https://github.com/lvzero535/nest-vue-web.git"
@@ -18,14 +19,14 @@ echo "🚀 开始部署..."
 # === 拉取或更新前端仓库 ===
 echo "⬇️ 克隆前端仓库..."
 if [ -d "$FRONTEND_DIR/.git" ]; then
-  rm -rf "$FRONTEND_DIR"/*
+  rm -rf "$FRONTEND_DIR"
 fi
 git clone "$FRONTEND_REPO" "$FRONTEND_DIR"
 
 # === 拉取或更新后端仓库 ===
 echo "⬇️ 克隆后端仓库..."
 if [ -d "$BACKEND_DIR/.git" ]; then
-  rm -rf "$BACKEND_DIR"/*
+  rm -rf "$BACKEND_DIR"
 fi
 git clone "$BACKEND_REPO" "$BACKEND_DIR"
 
@@ -41,6 +42,6 @@ docker build -t "$BACKEND_IMAGE" .
 
 # === 启动服务 ===
 echo "🚀 启动 docker-compose 服务..."
-docker-compose up -d
+docker compose up -d
 
 echo "✅ 部署完成！"
