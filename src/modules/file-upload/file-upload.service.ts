@@ -77,8 +77,9 @@ export class FileUploadService {
       fs.unlinkSync(filePath);
     }
 
-    // 将文件写入指定路径
-    fs.writeFileSync(filePath, file.buffer);
+    const writeStream = fs.createWriteStream(filePath);
+    writeStream.write(file.buffer);
+    writeStream.end();
 
     this.fileRepository.save(fileDto);
 
